@@ -1,11 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script defer src="./main.js"></script>
-    <title>Document</title>
+    <title>Reservas Pádel</title>
+    <link rel="stylesheet" href="./css/style.css">
+     <script src="./js/main.js"></script>
 </head>
 <body>
+
+    <section id="reservas-section">
+        <h2>Reservas de Canchas</h2>
+
+        <div id="equipos">
+            <label>Equipo 1 (nombres separados por coma):
+                <input type="text" id="input-equipo1" placeholder="Ej: Juan, Pedro">
+            </label>
+            <label>Equipo 2 (nombres separados por coma):
+                <input type="text" id="input-equipo2" placeholder="Ej: Luis, Marcos">
+            </label>
+        </div>
+
+        <div id="horario-cancha">
+            <label>Fecha: <input type="date" id="input-fecha"></label>
+            <label>Hora de comienzo: 
+                <select id="input-hora-comienzo">
+                    <option value="08:00">08:00</option>
+                    <option value="09:00">09:00</option>
+                    <option value="10:00">10:00</option>
+                    <option value="11:00">11:00</option>
+                    <option value="12:00">12:00</option>
+                </select>
+            </label>
+            <label>Hora de fin: 
+                <select id="input-hora-fin">
+                    <option value="09:00">09:00</option>
+                    <option value="10:00">10:00</option>
+                    <option value="11:00">11:00</option>
+                    <option value="12:00">12:00</option>
+                    <option value="13:00">13:00</option>
+                </select>
+            </label>
+            <label>Cancha:
+                <select id="input-cancha">
+                    <option value="Cancha 1">Cancha 1</option>
+                    <option value="Cancha 2">Cancha 2</option>
+                </select>
+            </label>
+            <button id="btn-agregar-reserva">Agregar Reserva</button>
+        </div>
+
+        <ul id="lista-reservas"></ul>
+    </section>
+
+  
 </body>
 </html>

@@ -1,45 +1,83 @@
+document.addEventListener("DOMContentLoaded", () => {
+    let reservas = JSON.parse(localStorage.getItem("reservas")) || [];
 
-function pedirLista() {
-  const productos = [];
+    const inputEquipo1 = document.getElementById("input-equipo1");
+    const inputEquipo2 = document.getElementById("input-equipo2");
+    const inputFecha = document.getElementById("input-fecha");
+    const inputHoraComienzo = document.getElementById("input-hora-comienzo");
+    const inputHoraFin = document.getElementById("input-hora-fin");
+    const inputCancha = document.getElementById("input-cancha");
+    const btnAgregarReserva = document.getElementById("btn-agregar-reserva");
+    const listaReservas = document.getElementById("lista-reservas");
 
-  while (true) {
-    let nombre = prompt("Nombre del producto: ");
-    if (nombre === null || nombre === "") {
-      break;
+    function mostrarReservas() {
+        listaReservas.innerHTML = "";
+
+        reservas.sort((a, b) => {
+            if(a.fecha === b.fecha){
+                return a.horaComienzo.localeCompare(b.horaComienzo);
+            }
+            return a.fecha.localeCompare(b.fecha);
+        });
+
+        reservas.map((reserva, index) => {
+            const li = document.createElement("li");
+            li.textContent = `${reserva.fecha} | ${reserva.horaComienzo} - ${reserva.horaFin} | ${reserva.cancha} | ${reserva.equipo1} vs ${reserva.equipo2}`;
+            const btnEliminar = document.createElement("button");
+            btnEliminar.textContent = "Eliminar";
+            btnEliminar.addEventListener("click", () => {
+                eliminarReserva(index);
+            });
+            li.appendChild(btnEliminar);
+            listaReservas.appendChild(li);
+        });
     }
 
-    let comparador = prompt("Precio de " + nombre + " (numeros enteros):");
-    let precio = parseInt(comparador); 
+    function agregarReserva() {
+        const equipo1 = inputEquipo1.value.trim();
+        const equipo2 = inputEquipo2.value.trim();
+        const fecha = inputFecha.value;
+        const horaComienzo = inputHoraComienzo.value;
+        const horaFin = inputHoraFin.value;
+        const cancha = inputCancha.value;
 
-    if (isNaN(precio)) {
-      alert("precio inválido. ingresa un numero entero.");
-    } else {
-      productos.push({ nombre: nombre, precio: precio });
+        if(!equipo1 || !equipo2 || !fecha || !horaComienzo || !horaFin || !cancha){
+            alert("Complete todos los campos de la reserva.");
+            return;
+        }
+
+        if(horaFin <= horaComienzo){
+            alert("La hora de fin debe ser mayor que la hora de comienzo.");
+            return;
+        }
+
+       
+        const solapadas = reservas.filter(r => 
+            r.fecha === fecha && r.cancha === cancha &&
+            ((horaComienzo >= r.horaComienzo && horaComienzo < r.horaFin) ||
+             (horaFin > r.horaComienzo && horaFin <= r.horaFin) ||
+             (horaComienzo <= r.horaComienzo && horaFin >= r.horaFin))
+        );
+
+        if(solapadas.length === 0){
+            reservas.push({equipo1, equipo2, fecha, horaComienzo, horaFin, cancha});
+            localStorage.setItem("reservas", JSON.stringify(reservas));
+            mostrarReservas();
+            
+            inputEquipo1.value = "";
+            inputEquipo2.value = "";
+        } else {
+            alert("El horario seleccionado se solapa con otra reserva.");
+        }
     }
-  }
 
-  return productos;
-}
+    function eliminarReserva(index) {
+        reservas = reservas.filter((_, i) => i !== index);
+        localStorage.setItem("reservas", JSON.stringify(reservas));
+        mostrarReservas();
+    }
 
-function mostrarResultado(lista) {
-  let mensaje = "Lista del super:\n";
-  let total = 0;
+    btnAgregarReserva.addEventListener("click", agregarReserva);
 
-  for (let item of lista) {
-    mensaje = mensaje+ "- " + item.nombre + ": $" + item.precio + "\n";
-    total = total+ item.precio;
-  }
-
-  mensaje = mensaje+ "\nTotal a pagar: $" + total;
-  alert(mensaje);
-}
-
-function simulador() {
-  alert("lista del supermercado.");
-  const lista = pedirLista();
-
-mostrarResultado(lista);
-}
- 
-simulador();
-
+    mostrarReservas();
+});
